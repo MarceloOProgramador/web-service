@@ -65,7 +65,12 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category = $this->Category->find($id);
+
+        if($category)
+            return response()->json($category, 202);
+        else
+            return response()->json(["error" => "Not Found"], 404);
     }
 
     /**
@@ -86,7 +91,7 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreUpdateCategoryRequest $request, $id)
     {
         (array) $datas = []; 
         (array) $category = [];
@@ -113,6 +118,16 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+
+        $category = $this->Category->find($id);
+
+        if($category){
+
+            $category->delete();
+            return response()->json(["success" => "Deleted"], 204);
+
+        } else 
+            return response()->json(["error" => "Not found"], 404);
+        
     }
 }
