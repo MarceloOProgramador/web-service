@@ -8,3 +8,5 @@ $this->delete("categories/{id}", "Api\CategoryController@destroy");
 */
 
 $this->apiResource("categories", "Api\CategoryController");
+
+$this->apiResource("products", "Api\ProductsController");
