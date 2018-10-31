@@ -20,10 +20,12 @@ class ProductsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $Request)
     {
         
-        $products = $this->Product->paginate($this->totalItems);
+        (array) $datas = $Request->all();
+
+        $products = $this->Product->getResults($datas, $this->totalItems);
 
         return response()->json($products);
 
