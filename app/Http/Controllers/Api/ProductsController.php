@@ -38,7 +38,8 @@ class ProductsController extends Controller
      */
     public function create()
     {
-        //
+        
+
     }
 
     /**
@@ -47,9 +48,16 @@ class ProductsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $Request)
     {
-        //
+        $datas = $Request->all();
+
+        $created = $this->Product->create($datas);
+
+        if($created)
+            return response()->json("Cadastrado com sucesso");
+        else 
+            return response()->json("Not register");
     }
 
     /**
@@ -81,9 +89,27 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $Request, $id)
     {
-        //
+
+        (array) $datas = $Request->all();
+        (array) $product = array();
+        (array) $edited = array();
+
+        $product = $this->Product->find($id);
+
+        if(isset($product)){
+
+            $edited = $product->update($datas);
+
+            if(!empty($edited))
+                return response()->json("Item updated");
+            
+            return response()->json("Product not updated");
+
+        }else
+            return response()->json(["error"=>"Product not founded"], 404);
+
     }
 
     /**
