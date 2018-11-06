@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
+use \App\Http\Requests\CreateUpdateProductRequest;
 use App\Http\Controllers\Controller;
 use \App\Models\Product;
 
@@ -20,7 +20,7 @@ class ProductsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $Request)
+    public function index(CreateUpdateProductRequest $Request)
     {
         
         (array) $datas = $Request->all();
@@ -48,7 +48,7 @@ class ProductsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $Request)
+    public function store(CreateUpdateProductRequest $Request)
     {
         $datas = $Request->all();
 
@@ -89,7 +89,7 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $Request, $id)
+    public function update(CreateUpdateProductRequest $Request, $id)
     {
 
         (array) $datas = $Request->all();
@@ -120,6 +120,16 @@ class ProductsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        (array) $product = array();
+        
+        $product = $this->Product->find($id);
+
+        if(isset($product)){
+
+            $product->delete();
+            return response()->json(["success"], 404);
+
+        }else 
+            return response()->json(["errors" => "not found"], 404);
     }
 }
