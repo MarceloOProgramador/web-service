@@ -7,8 +7,12 @@ $this->put("categories/{id}", "Api\CategoryController@update");
 $this->delete("categories/{id}", "Api\CategoryController@destroy");
 */
 
-$this->get("/category/{id}/products", "Api\CategoryController@getProducts");
+$this->group(["prefix" => "v1", "namespace" => 'Api\v1'], function(){
 
-$this->apiResource("categories", "Api\CategoryController");
+    $this->get("/category/{id}/products", "CategoryController@getProducts");
 
-$this->apiResource("products", "Api\ProductsController");
+    $this->apiResource("categories", "CategoryController");
+
+    $this->apiResource("products", "ProductsController");
+
+});

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\v1;
 
 use \App\Http\Requests\CreateUpdateProductRequest;
 use App\Http\Controllers\Controller;
@@ -89,7 +89,7 @@ class ProductsController extends Controller
     public function show($id)
     {
         
-        (array) $product = $this->Product->find($id);
+        (array) $product = $this->Product->with("category")->find($id);
 
         if(isset($product))
             return response()->json($product);
