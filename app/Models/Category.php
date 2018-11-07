@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Product;
 
 class Category extends Model
 {
@@ -12,5 +13,9 @@ class Category extends Model
 
         return $this->where("name", "LIKE", "%{$filter}%")->get();
 
+    }
+
+    public function getProducts(){
+        return $this->hasMany(Product::class);
     }
 }

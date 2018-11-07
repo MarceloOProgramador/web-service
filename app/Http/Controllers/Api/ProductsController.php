@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api;
 use \App\Http\Requests\CreateUpdateProductRequest;
 use App\Http\Controllers\Controller;
 use \App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
     private $Product, $totalItems = 10;
+    private $uploadPath = "products";
 
     public function __construct(){
 
@@ -50,7 +52,25 @@ class ProductsController extends Controller
      */
     public function store(CreateUpdateProductRequest $Request)
     {
+        
         $datas = $Request->all();
+
+        //UPDATE UPLOAD FILE
+        if($Request->hasFile("image") && $Request->file("image")->isValid()){
+
+            $name = kebab_case($datas["name"]);
+            $extension = $Request->image->extension();
+
+            $fileName = "{$name}.{$extension}";
+            $datas["image"] = $fileName;
+            
+            $stored = $Request->image->storeAs($this->uploadPath, $fileName);
+
+            if(!$stored){
+                return response()->json(["errors" => "File not uploaded"], 500);
+            }
+
+        }
 
         $created = $this->Product->create($datas);
 
@@ -68,7 +88,14 @@ class ProductsController extends Controller
      */
     public function show($id)
     {
-        //
+        
+        (array) $product = $this->Product->find($id);
+
+        if(isset($product))
+            return response()->json($product);
+        else
+            return response()->json(["errors" => "Products not found"], 404);
+
     }
 
     /**
@@ -98,6 +125,28 @@ class ProductsController extends Controller
 
         $product = $this->Product->find($id);
 
+        //UPDATE UPLOAD FILE
+        if($Request->hasFile("image") && $Request->file("image")->isValid()){
+
+            if(!empty($product)){
+                if(Storage::exists("{$this->uploadPath}/{$product->image}"))
+                    Storage::delete("{$this->uploadPath}/{$products->image}");
+            }
+
+            $name = kebab_case($datas["name"]);
+            $extension = $Request->image->extension();
+
+            $fileName = "{$name}.{$extension}";
+            $datas["image"] = $fileName;
+            
+            $stored = $Request->image->storeAs($this->uploadPath, $fileName);
+
+            if(!$stored){
+                return response()->json(["errors" => "File not uploaded"], 500);
+            }
+
+        }
+
         if(isset($product)){
 
             $edited = $product->update($datas);
@@ -125,6 +174,10 @@ class ProductsController extends Controller
         $product = $this->Product->find($id);
 
         if(isset($product)){
+
+            
+            if(Storage::exists("{$this->uploadPath}/{$product->image}"))
+                Storage::delete("{$this->uploadPath}/{$products->image}");
 
             $product->delete();
             return response()->json(["success"], 404);

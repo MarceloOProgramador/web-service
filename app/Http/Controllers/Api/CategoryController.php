@@ -10,7 +10,7 @@ Use App\Models\Category;
 class CategoryController extends Controller
 {
 
-    private $Category;
+    private $Category, $totalItems = 10;
     
     public function __construct() {
 
@@ -129,5 +129,19 @@ class CategoryController extends Controller
         } else 
             return response()->json(["error" => "Not found"], 404);
         
+    }
+
+    public function getProducts($id){
+        (array) $category = array();
+        (array) $products = array();
+        
+        $category = $this->Category->find($id);
+
+        if(isset($category)){
+            $products = $category->getProducts()->paginate($this->totalItems);
+            return response()->json(["products" => $products, "category" => $category]);
+        } else 
+            return response()->json(["errors" => "Category not founded"], 404);
+
     }
 }
